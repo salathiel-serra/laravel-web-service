@@ -9,6 +9,13 @@ class Product extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'category_id', 
+        'name', 
+        'description', 
+        'image'
+    ];
+
     public function getResults($data, $itemsPerPage)
     {
         if (!isset($data['filter']) && !isset($data['name']) && !isset($data['description']))

@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreOrUpdateProductFormRequest;
 
 class ProductController extends Controller
 {
@@ -34,9 +35,12 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreOrUpdateProductFormRequest $request)
     {
-        //
+        $data    = $request->all();
+        $product = $this->mProduct->create($data);
+
+        return response()->json($product, 201);
     }
 
     /**
@@ -57,9 +61,16 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StoreOrUpdateProductFormRequest $request, $id)
     {
-        //
+        $product = $this->mProduct->find($id);
+        if (!$product)
+            return response()->json(['error' => 'Not found'], 404);
+
+        $data = $request->all();
+        $product->update($data);
+
+        return response()->json($product);
     }
 
     /**
