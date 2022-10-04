@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    private $mProduct;
+    private $mProduct, $itemsPerPage = 15;
 
     public function __construct(Product $product)
     {
@@ -20,9 +20,10 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = $this->mProduct->get();
+        $data     = $request->all();
+        $products = $this->mProduct->getResults($data, $this->itemsPerPage);
 
         return response()->json($products);
     }
