@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\{
-    CategoryController
+    CategoryController, ProductController
 };
 
 /*
@@ -29,6 +29,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::apiResource('categories', CategoryController::class, [
+    'except' => ['create', 'edit']
+]);
+
+Route::apiResource('products', ProductController::class, [
     'except' => ['create', 'edit']
 ]);
 
