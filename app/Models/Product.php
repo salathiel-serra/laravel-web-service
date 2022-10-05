@@ -40,4 +40,9 @@ class Product extends Model
 
         return $result->paginate($itemsPerPage);
     }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }
