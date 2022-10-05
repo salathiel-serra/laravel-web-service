@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Product;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreOrUpdateProductFormRequest;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -37,7 +39,21 @@ class ProductController extends Controller
      */
     public function store(StoreOrUpdateProductFormRequest $request)
     {
-        $data    = $request->all();
+        $data = $request->all();
+
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $name = Str::kebab($request->name);
+            $extension = $request->image->extension();
+
+            $nameFile = "{$name}.{$extension}";
+            $data['image'] = $nameFile;
+            
+            $upload = $request->image->storeAs('products', $nameFile);
+
+            if (!$upload)
+                return response()->json(['error' => 'Fail upload'], 500);
+        }
+
         $product = $this->mProduct->create($data);
 
         return response()->json($product, 201);
@@ -72,6 +88,25 @@ class ProductController extends Controller
             return response()->json(['error' => 'Not found'], 404);
 
         $data = $request->all();
+
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            if ($product->image) {
+                if (Storage::exists("products/{$product->image}"))
+                    Storage::delete("products/{$product->image}");
+            }
+
+            $name = Str::kebab($request->name);
+            $extension = $request->image->extension();
+
+            $nameFile = "{$name}.{$extension}";
+            $data['image'] = $nameFile;
+            
+            $upload = $request->image->storeAs('products', $nameFile);
+
+            if (!$upload)
+                return response()->json(['error' => 'Fail upload'], 500);
+        }
+
         $product->update($data);
 
         return response()->json($product);
@@ -89,6 +124,11 @@ class ProductController extends Controller
         if (!$product)
             return response()->json(['error' => 'Not found'], 404);
 
+        if ($product->image) {
+            if (Storage::exists("products/{$product->image}"))
+                Storage::delete("products/{$product->image}");
+        }
+        
         $product->delete();
         
         return response()->json(['success' => true], 204);
