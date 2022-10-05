@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\{
+use App\Http\Controllers\Api\V1\{
     CategoryController, ProductController
 };
 
@@ -27,14 +27,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Route::put('/categories/{id}', [CategoryController::class, 'update']);
 // Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
 
-Route::get('categories/{id}/products', [CategoryController::class, 'products']);
-Route::apiResource('categories', CategoryController::class, [
-    'except' => ['create', 'edit']
-]);
 
-Route::apiResource('products', ProductController::class, [
-    'except' => ['create', 'edit']
-]);
+Route::group(['prefix' => 'v1'], function() {
+    Route::get('categories/{id}/products', [CategoryController::class, 'products']);
+    Route::apiResource('categories', CategoryController::class, [
+        'except' => ['create', 'edit']
+    ]);
+    
+    Route::apiResource('products', ProductController::class, [
+        'except' => ['create', 'edit']
+    ]);
+});
 
 
 
