@@ -27,7 +27,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Route::put('/categories/{id}', [CategoryController::class, 'update']);
 // Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
 
-
+Route::get('categories/{id}/products', [CategoryController::class, 'products']);
 Route::apiResource('categories', CategoryController::class, [
     'except' => ['create', 'edit']
 ]);

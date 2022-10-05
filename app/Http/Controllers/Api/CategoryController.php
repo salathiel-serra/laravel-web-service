@@ -51,7 +51,7 @@ class CategoryController extends Controller
     {
         $category = $this->mCategory->find($id);
         if (!$category)
-            return response()->json(['Message' => 'Not found'], 404);
+            return response()->json(['error' => 'Not found'], 404);
 
         return response()->json($category, 200);
     }
@@ -67,7 +67,7 @@ class CategoryController extends Controller
     {
         $category = $this->mCategory->find($id);
         if (!$category)
-            return response()->json(['Message' => 'Not found'], 404);
+            return response()->json(['error' => 'Not found'], 404);
 
         $category->update($request->all());
         
@@ -84,10 +84,24 @@ class CategoryController extends Controller
     {
         $category = $this->mCategory->find($id);
         if (!$category)
-            return response()->json(['Message' => 'Not found'], 404);
+            return response()->json(['error' => 'Not found'], 404);
 
         $category->delete();
         
         return response()->json(['Success' => true], 204);
+    }
+
+    public function products($id)
+    {
+        $category = $this->mCategory->find($id);
+        if (!$category)
+            return response()->json(['error' => 'Not found'], 404);
+
+        $products = $category->products()->paginate(10);
+
+        return response()->json([
+            'category' => $category,
+            'products' => $products
+        ]);
     }
 }
